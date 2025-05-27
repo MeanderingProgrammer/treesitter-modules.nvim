@@ -1,0 +1,27 @@
+---@class ts.mod.Init
+local M = {}
+
+---@class (exact) ts.mod.Config
+---@field highlight ts.mod.highlight.Config
+
+---@private
+---@type boolean
+M.initialized = false
+
+---@type ts.mod.Config
+M.default = {
+    highlight = require('treesitter-modules.mods.highlight').default,
+}
+
+---@param opts? ts.mod.UserConfig
+function M.setup(opts)
+    -- skip initialization if already done and input is empty
+    if M.initialized and vim.tbl_count(opts or {}) == 0 then
+        return
+    end
+    M.initialized = true
+    local config = vim.tbl_deep_extend('force', M.default, opts or {})
+    require('treesitter-modules.state').setup(config)
+end
+
+return M
