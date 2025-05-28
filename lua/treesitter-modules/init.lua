@@ -2,8 +2,8 @@
 local M = {}
 
 ---@class (exact) ts.mod.Config
----@field highlight ts.mod.highlight.Config
----@field incremental_selection ts.mod.incremental.Config
+---@field highlight ts.mod.hl.Config
+---@field incremental_selection ts.mod.inc.Config
 
 ---@private
 ---@type boolean

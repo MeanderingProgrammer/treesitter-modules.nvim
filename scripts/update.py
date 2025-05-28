@@ -20,9 +20,8 @@ class LuaClass:
         return self.value.split()[1] == "(exact)"
 
     def config(self) -> bool:
-        # ---@class ts.mod.Init: ts.mod.Api         -> ts.mod.Init             -> Init
-        # ---@class (exact) ts.mod.Config           -> ts.mod.Config           -> Config
-        # ---@class (exact) ts.mod.highlight.Config -> ts.mod.highlight.Config -> Config
+        # ---@class ts.mod.Hl: ts.mod.Module -> ts.mod.Hl         -> Hl
+        # ---@class (exact) ts.mod.Config    -> ts.mod.Config     -> Config
         full_name = self.value.split(":")[0].split()[-1]
         name = full_name.split(".")[-1]
         return name == "Config"
@@ -86,10 +85,12 @@ def get_definitions(files: list[Path]) -> list[LuaClass]:
     result: list[LuaClass] = []
     for file in files:
         for comment in get_comments(file):
-            # ---@class (exact) ts.mod.highlight.Config -> class
-            # ---@field enable boolean                  -> field
-            # ---@type ts.mod.Config                    -> type
-            # ---@param opts? ts.mod.UserConfig         -> param
+            # ---@class (exact) ts.mod.Config          -> class
+            # ---@field enable boolean                 -> field
+            # ---@alias ts.mod.inc.Keymap string|false -> alias
+            # ---| 'init_selection'                    -> ---|
+            # ---@type ts.mod.Config                   -> type
+            # ---@param opts? ts.mod.UserConfig        -> param
             annotation = comment.split()[0].split("@")[-1]
             if annotation == "class":
                 result.append(LuaClass(comment))

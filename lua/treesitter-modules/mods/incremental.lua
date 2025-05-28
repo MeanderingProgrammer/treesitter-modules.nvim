@@ -1,20 +1,28 @@
 local selection = require('treesitter-modules.lib.selection')
 
----@class (exact) ts.mod.incremental.Config
+---@class (exact) ts.mod.inc.Config
 ---@field enable boolean
----@field keymaps ts.mod.incremental.keymap.Config
+---@field keymaps ts.mod.inc.Keymaps
 
----@class (exact) ts.mod.incremental.keymap.Config
----@field init_selection string|boolean
----@field node_incremental string|boolean
----@field scope_incremental string|boolean
----@field node_decremental string|boolean
+---@alias ts.mod.inc.Keymaps table<ts.mod.inc.Kind, ts.mod.inc.Keymap>
 
----@class ts.mod.Incremental: ts.mod.Interface
----@field private config ts.mod.incremental.Config
+---@alias ts.mod.inc.Kind
+---| 'init_selection'
+---| 'node_incremental'
+---| 'scope_incremental'
+---| 'node_decremental'
+
+---@alias ts.mod.inc.Keymap string|false
+
+---@class (exact) ts.mod.inc.Details
+---@field [1] string mode
+---@field [2] string description
+
+---@class ts.mod.Inc: ts.mod.Module
+---@field private config ts.mod.inc.Config
 local M = {}
 
----@type ts.mod.incremental.Config
+---@type ts.mod.inc.Config
 M.default = {
     enable = false,
     keymaps = {
@@ -25,8 +33,17 @@ M.default = {
     },
 }
 
+---@private
+---@type table<ts.mod.inc.Kind, ts.mod.inc.Details>
+M.details = {
+    init_selection = { 'n', 'Start selecting nodes with treesitter-modules' },
+    node_incremental = { 'x', 'Increment selection to named node' },
+    scope_incremental = { 'x', 'Increment selection to surrounding scope' },
+    node_decremental = { 'x', 'Shrink selection to previous named node' },
+}
+
 ---called from state on setup
----@param config ts.mod.incremental.Config
+---@param config ts.mod.inc.Config
 function M.setup(config)
     M.config = config
 end
@@ -44,56 +61,45 @@ end
 
 ---@param ctx ts.mod.Context
 function M.attach(ctx)
-    local keymaps = M.config.keymaps
-    M.map(ctx, 'n', keymaps.init_selection, function()
-        selection.init(ctx.buf, ctx.language)
-    end, 'Start selecting nodes with treesitter-modules')
-    M.map(ctx, 'x', keymaps.node_incremental, function()
-        selection.node_incremental(ctx.buf, ctx.language)
-    end, 'Increment selection to named node')
-    M.map(ctx, 'x', keymaps.scope_incremental, function()
-        selection.scope_incremental(ctx.buf, ctx.language)
-    end, 'Increment selection to surrounding scope')
-    M.map(ctx, 'x', keymaps.node_decremental, function()
-        selection.node_decremental(ctx.buf, ctx.language)
-    end, 'Shrink selection to previous named node')
+    M.map(ctx, 'init_selection', selection.init_selection)
+    M.map(ctx, 'node_incremental', selection.node_incremental)
+    M.map(ctx, 'scope_incremental', selection.scope_incremental)
+    M.map(ctx, 'node_decremental', selection.node_decremental)
 end
 
 ---@private
 ---@param ctx ts.mod.Context
----@param mode string
----@param lhs string|boolean
----@param rhs function
----@param desc string
-function M.map(ctx, mode, lhs, rhs, desc)
-    if type(lhs) == 'boolean' then
+---@param kind ts.mod.inc.Kind
+---@param rhs fun(buf: integer, language: string)
+function M.map(ctx, kind, rhs)
+    local lhs = M.config.keymaps[kind]
+    if lhs == false then
         return
     end
-    vim.keymap.set(mode, lhs, rhs, {
-        buffer = ctx.buf,
-        silent = true,
-        desc = desc,
-    })
+    local details = M.details[kind]
+    vim.keymap.set(details[1], lhs, function()
+        rhs(ctx.buf, ctx.language)
+    end, { buffer = ctx.buf, silent = true, desc = details[2] })
 end
 
 ---@param ctx ts.mod.Context
 function M.detach(ctx)
-    local keymaps = M.config.keymaps
-    M.delete(ctx, 'n', keymaps.init_selection)
-    M.delete(ctx, 'x', keymaps.node_incremental)
-    M.delete(ctx, 'x', keymaps.scope_incremental)
-    M.delete(ctx, 'x', keymaps.node_decremental)
+    M.delete(ctx, 'init_selection')
+    M.delete(ctx, 'node_incremental')
+    M.delete(ctx, 'scope_incremental')
+    M.delete(ctx, 'node_decremental')
 end
 
 ---@private
 ---@param ctx ts.mod.Context
----@param mode string
----@param lhs string|boolean
-function M.delete(ctx, mode, lhs)
-    if type(lhs) == 'boolean' then
+---@param kind ts.mod.inc.Kind
+function M.delete(ctx, kind)
+    local lhs = M.config.keymaps[kind]
+    if lhs == false then
         return
     end
-    pcall(vim.keymap.del, mode, lhs, { buffer = ctx.buf })
+    local details = M.details[kind]
+    pcall(vim.keymap.del, details[1], lhs, { buffer = ctx.buf })
 end
 
 return M

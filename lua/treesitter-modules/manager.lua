@@ -10,7 +10,7 @@ M.group = vim.api.nvim_create_augroup('TreesitterModules', {})
 M.cache = require('treesitter-modules.lib.cache').new()
 
 ---@private
----@type ts.mod.Interface[]
+---@type ts.mod.Module[]
 M.modules = {
     require('treesitter-modules.mods.highlight'),
     require('treesitter-modules.mods.incremental'),
@@ -40,7 +40,7 @@ function M.reattach(buf)
 end
 
 ---@private
----@param mod ts.mod.Interface
+---@param mod ts.mod.Module
 ---@param ctx ts.mod.Context
 function M.reattach_module(mod, ctx)
     local name = mod.name()

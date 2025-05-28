@@ -5,7 +5,7 @@ local M = {}
 
 ---@param buf integer
 ---@param language string
-function M.init(buf, language)
+function M.init_selection(buf, language)
     if not M.parse(buf, language) then
         return
     end
@@ -78,7 +78,7 @@ function M.api_range(buf, node)
         local lines = vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)
         ecol = math.max(#lines[1], 1)
     end
-    return { srow, scol, erow, ecol - 1 }
+    return { srow, scol, erow, ecol - 1 } ---@type Range4
 end
 
 ---@private

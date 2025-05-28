@@ -4,7 +4,7 @@
 ---@field buf integer
 ---@field language string
 
----@class ts.mod.Interface
+---@class ts.mod.Module
 ---@field name fun(): string
 ---@field enabled fun(ctx: ts.mod.Context): boolean
 ---@field attach fun(ctx: ts.mod.Context)

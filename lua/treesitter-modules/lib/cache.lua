@@ -1,5 +1,7 @@
+---@alias ts.mod.Set table<integer, true>
+
 ---@class ts.mod.Cache
----@field private sets table<string, table<integer, boolean>>
+---@field private sets table<string, ts.mod.Set>
 local Cache = {}
 Cache.__index = Cache
 
@@ -31,7 +33,7 @@ end
 
 ---@private
 ---@param name string
----@return table<integer, boolean>
+---@return ts.mod.Set
 function Cache:get(name)
     if not self.sets[name] then
         self.sets[name] = {}

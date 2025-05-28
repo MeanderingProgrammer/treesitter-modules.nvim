@@ -1,19 +1,19 @@
----@class (exact) ts.mod.highlight.Config
+---@class (exact) ts.mod.hl.Config
 ---@field enable boolean
 ---@field disable string[]
 
----@class ts.mod.Highlight: ts.mod.Interface
----@field private config ts.mod.highlight.Config
+---@class ts.mod.Hl: ts.mod.Module
+---@field private config ts.mod.hl.Config
 local M = {}
 
----@type ts.mod.highlight.Config
+---@type ts.mod.hl.Config
 M.default = {
     enable = false,
     disable = {},
 }
 
 ---called from state on setup
----@param config ts.mod.highlight.Config
+---@param config ts.mod.hl.Config
 function M.setup(config)
     M.config = config
 end
