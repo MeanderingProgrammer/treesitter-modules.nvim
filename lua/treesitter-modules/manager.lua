@@ -1,3 +1,5 @@
+local ts = require('treesitter-modules.lib.ts')
+
 ---@class ts.mod.Manager
 local M = {}
 
@@ -5,7 +7,7 @@ local M = {}
 M.group = vim.api.nvim_create_augroup('TreesitterModules', {})
 
 ---@private
-M.cache = require('treesitter-modules.cache').new()
+M.cache = require('treesitter-modules.lib.cache').new()
 
 ---@private
 ---@type ts.mod.Interface[]
@@ -39,6 +41,9 @@ end
 ---@param ctx ts.mod.Context
 function M.reattach_module(mod, ctx)
     local name = mod.name()
+    if not ts.parser(ctx.buf, ctx.language) then
+        return
+    end
     if not mod.enabled(ctx) then
         return
     end

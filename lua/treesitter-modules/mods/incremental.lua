@@ -1,4 +1,4 @@
-local selection = require('treesitter-modules.selection')
+local selection = require('treesitter-modules.lib.selection')
 
 ---@class (exact) ts.mod.incremental.Config
 ---@field enable boolean

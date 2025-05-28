@@ -1,3 +1,5 @@
+local ts = require('treesitter-modules.lib.ts')
+
 ---@class ts.mod.Selection
 local M = {}
 
@@ -54,8 +56,8 @@ end
 ---@param language string
 ---@return boolean
 function M.parse(buf, language)
-    local has, parser = pcall(vim.treesitter.get_parser, buf, language)
-    if not has or not parser then
+    local parser = ts.parser(buf, language)
+    if not parser then
         return false
     end
     parser:parse({ vim.fn.line('w0') - 1, vim.fn.line('w$') })
