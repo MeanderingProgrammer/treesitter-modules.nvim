@@ -5,3 +5,4 @@
 
 ---@class (exact) ts.mod.highlight.UserConfig
 ---@field enable? boolean
+---@field disable? string[]

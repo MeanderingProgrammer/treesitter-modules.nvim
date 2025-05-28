@@ -42,6 +42,7 @@ use({
 require('treesitter-modules').setup({
     highlight = {
         enable = false,
+        disable = {},
     },
 })
 ```
