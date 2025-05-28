@@ -1,3 +1,4 @@
+local Range = require('treesitter-modules.lib.range')
 local ts = require('treesitter-modules.lib.ts')
 
 ---@class ts.mod.Selection
@@ -6,37 +7,42 @@ local M = {}
 ---@param buf integer
 ---@param language string
 function M.init_selection(buf, language)
-    if not M.parse(buf, language) then
+    local parser = M.parse(buf, language)
+    if not parser then
         return
     end
-    local node = vim.treesitter.get_node({ bufnr = buf })
+    local node = vim.treesitter.get_node({
+        bufnr = buf,
+        ignore_injections = false,
+    })
     if not node then
         return
     end
-    M.select(M.api_range(buf, node))
+    M.select(Range.node(node))
 end
 
 ---@param buf integer
 ---@param language string
 function M.node_incremental(buf, language)
-    if not M.parse(buf, language) then
+    local parser = M.parse(buf, language)
+    if not parser then
         return
     end
-    local node = vim.treesitter.get_node({ bufnr = buf })
+    -- iterate through parent parsers and nodes until we find a node outside of range
+    local range = Range.visual()
+    parser = parser:language_for_range(range:ts())
+    local node = nil ---@type TSNode?
+    while parser and not node do
+        node = parser:named_node_for_range(range:ts())
+        while node and range:same(Range.node(node)) do
+            node = node:parent()
+        end
+        parser = parser:parent()
+    end
     if not node then
         return
     end
-    local i = 0
-    local range = M.api_range(buf, node)
-    -- TODO: selected node is too small
-    while node and vim.deep_equal(range, M.api_range(buf, node)) do
-        i = i + 1
-        node = node:parent()
-    end
-    if not node then
-        return
-    end
-    M.select(M.api_range(buf, node))
+    M.select(Range.node(node))
 end
 
 ---@param buf integer
@@ -54,43 +60,28 @@ end
 ---@private
 ---@param buf integer
 ---@param language string
----@return boolean
+---@return vim.treesitter.LanguageTree?
 function M.parse(buf, language)
     local parser = ts.parser(buf, language)
     if not parser then
-        return false
+        return nil
     end
-    parser:parse({ vim.fn.line('w0') - 1, vim.fn.line('w$') })
-    return true
+    -- 1-indexed inclusive -> 0-indexed exclusive
+    local first, last = vim.fn.line('w0'), vim.fn.line('w$')
+    parser:parse({ first - 1, last })
+    return parser
 end
 
 ---@private
----@param buf integer
----@param node TSNode
----@return Range4
-function M.api_range(buf, node)
-    local srow, scol, erow, ecol = node:range()
-    srow = srow + 1
-    erow = erow + 1
-    if ecol == 0 then
-        -- use the value of the last col of the previous row instead
-        erow = erow - 1
-        local lines = vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)
-        ecol = math.max(#lines[1], 1)
-    end
-    return { srow, scol, erow, ecol - 1 } ---@type Range4
-end
-
----@private
----@param range Range4
+---@param range ts.mod.Range
 function M.select(range)
     local mode = vim.api.nvim_get_mode()
     if mode.mode ~= 'v' then
         vim.api.nvim_cmd({ cmd = 'normal', bang = true, args = { 'v' } }, {})
     end
-    vim.api.nvim_win_set_cursor(0, { range[1], range[2] })
+    vim.api.nvim_win_set_cursor(0, range:cursor_start())
     vim.cmd('normal! o')
-    vim.api.nvim_win_set_cursor(0, { range[3], range[4] })
+    vim.api.nvim_win_set_cursor(0, range:cursor_end())
 end
 
 return M
