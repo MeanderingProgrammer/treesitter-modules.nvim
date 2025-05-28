@@ -3,6 +3,7 @@ local M = {}
 
 ---@class (exact) ts.mod.Config
 ---@field highlight ts.mod.highlight.Config
+---@field incremental_selection ts.mod.incremental.Config
 
 ---@private
 ---@type boolean
@@ -11,6 +12,7 @@ M.initialized = false
 ---@type ts.mod.Config
 M.default = {
     highlight = require('treesitter-modules.mods.highlight').default,
+    incremental_selection = require('treesitter-modules.mods.incremental').default,
 }
 
 ---@param opts? ts.mod.UserConfig

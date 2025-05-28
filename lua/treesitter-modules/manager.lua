@@ -11,6 +11,7 @@ M.cache = require('treesitter-modules.cache').new()
 ---@type ts.mod.Interface[]
 M.modules = {
     require('treesitter-modules.mods.highlight'),
+    require('treesitter-modules.mods.incremental'),
 }
 
 ---called from plugin directory

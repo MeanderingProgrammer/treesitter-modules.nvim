@@ -7,6 +7,9 @@ local M = {}
 function M.setup(config)
     M.config = config
     require('treesitter-modules.mods.highlight').setup(config.highlight)
+    require('treesitter-modules.mods.incremental').setup(
+        config.incremental_selection
+    )
 end
 
 return M
