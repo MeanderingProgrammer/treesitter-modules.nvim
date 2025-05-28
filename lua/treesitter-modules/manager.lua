@@ -31,6 +31,9 @@ end
 function M.reattach(buf)
     local filetype = vim.api.nvim_get_option_value('filetype', { buf = buf })
     local language = vim.treesitter.language.get_lang(filetype) or filetype
+    if not ts.parser(buf, language) then
+        return
+    end
     for _, mod in ipairs(M.modules) do
         M.reattach_module(mod, { buf = buf, language = language })
     end
@@ -41,9 +44,6 @@ end
 ---@param ctx ts.mod.Context
 function M.reattach_module(mod, ctx)
     local name = mod.name()
-    if not ts.parser(ctx.buf, ctx.language) then
-        return
-    end
     if not mod.enabled(ctx) then
         return
     end
