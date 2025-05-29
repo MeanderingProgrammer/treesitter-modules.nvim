@@ -1,7 +1,8 @@
 ---@meta
 
 ---@class (exact) ts.mod.UserConfig
----@field ensure_installed? string|string[]
+---@field ensure_installed? ts.mod.Install
+---@field ignore_install? ts.mod.Install
 ---@field sync_install? boolean
 ---@field highlight? ts.mod.hl.UserConfig
 ---@field incremental_selection? ts.mod.inc.UserConfig

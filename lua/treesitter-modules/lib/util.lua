@@ -21,4 +21,17 @@ function M.evaluate(condition, ctx)
     end
 end
 
+---@param left string[]
+---@param right string[]
+---@return string[]
+function M.left_anti(left, right)
+    local result = {} ---@type string[]
+    for _, value in ipairs(left) do
+        if not vim.tbl_contains(right, value) then
+            result[#result + 1] = value
+        end
+    end
+    return result
+end
+
 return M

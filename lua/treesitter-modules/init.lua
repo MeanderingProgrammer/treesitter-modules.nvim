@@ -2,11 +2,14 @@
 local M = {}
 
 ---@class (exact) ts.mod.Config
----@field ensure_installed string|string[]
+---@field ensure_installed ts.mod.Install
+---@field ignore_install ts.mod.Install
 ---@field sync_install boolean
 ---@field highlight ts.mod.hl.Config
 ---@field incremental_selection ts.mod.inc.Config
 ---@field indent ts.mod.indent.Config
+
+---@alias ts.mod.Install string|string[]
 
 ---@private
 ---@type boolean
@@ -14,8 +17,10 @@ M.initialized = false
 
 ---@type ts.mod.Config
 M.default = {
-    -- list of parser names that must always be installed
+    -- list of parser names, or 'all', that must be installed
     ensure_installed = {},
+    -- list of parser names, or 'all', to ignore installing
+    ignore_install = {},
     -- install parsers in ensure_installed synchronously
     sync_install = false,
     highlight = require('treesitter-modules.mods.highlight').default,

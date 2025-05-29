@@ -1,3 +1,5 @@
+local util = require('treesitter-modules.lib.util')
+
 ---@class ts.mod.State
 ---@field private config ts.mod.Config
 local M = {}
@@ -19,40 +21,43 @@ function M.install()
     -- while install skips existing parsers it also echos information without a
     -- way to turn it off, to avoid this on every startup we resolve the list of
     -- missing languages here and skip installing if there aren't any
-    local languages = M.resolve_languages()
-    if #languages == 0 then
+    local install = M.resolve_install(M.config.ensure_installed)
+    if #install == 0 then
         return
     end
-    local missing = {} ---@type string[]
+
+    local ignore = M.resolve_install(M.config.ignore_install)
+    install = util.left_anti(install, ignore)
+    if #install == 0 then
+        return
+    end
+
     local installed = require('nvim-treesitter').get_installed()
-    for _, language in ipairs(languages) do
-        if not vim.tbl_contains(installed, language) then
-            missing[#missing + 1] = language
-        end
-    end
-    if #missing == 0 then
+    install = util.left_anti(install, installed)
+    if #install == 0 then
         return
     end
-    local task = require('nvim-treesitter').install(missing)
+
+    local task = require('nvim-treesitter').install(install)
     if M.config.sync_install then
         task:wait()
     end
 end
 
 ---@private
+---@param install ts.mod.Install
 ---@return string[]
-function M.resolve_languages()
-    local languages = {} ---@type string[]
-    local install = M.config.ensure_installed
+function M.resolve_install(install)
+    local result = {} ---@type string[]
     if type(install) == 'string' then
-        languages[#languages + 1] = install
+        result[#result + 1] = install
     else
-        languages = install
+        result = install
     end
-    if vim.tbl_contains(languages, 'all') then
-        languages = require('nvim-treesitter').get_available()
+    if vim.tbl_contains(result, 'all') then
+        result = require('nvim-treesitter').get_available()
     end
-    return languages
+    return result
 end
 
 return M

@@ -41,8 +41,10 @@ use({
 
 ```lua
 require('treesitter-modules').setup({
-    -- list of parser names that must always be installed
+    -- list of parser names, or 'all', that must be installed
     ensure_installed = {},
+    -- list of parser names, or 'all', to ignore installing
+    ignore_install = {},
     -- install parsers in ensure_installed synchronously
     sync_install = false,
     highlight = {
