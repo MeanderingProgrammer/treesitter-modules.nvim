@@ -1,12 +1,16 @@
+---@class ts.mod.nodes.Entry
+---@field tick integer
+---@field nodes TSNode[]
+
 ---@class ts.mod.Nodes
----@field private values table<integer, TSNode[]>
+---@field private entries table<integer, ts.mod.nodes.Entry>
 local Nodes = {}
 Nodes.__index = Nodes
 
 ---@return ts.mod.Nodes
 function Nodes.new()
     local self = setmetatable({}, Nodes)
-    self.values = {}
+    self.entries = {}
     return self
 end
 
@@ -36,17 +40,22 @@ end
 
 ---@param buf integer
 function Nodes:clear(buf)
-    self.values[buf] = {}
+    self.entries[buf] = nil
 end
 
 ---@private
 ---@param buf integer
 ---@return TSNode[]
 function Nodes:get(buf)
-    if not self.values[buf] then
-        self.values[buf] = {}
+    -- clear nodes on change tick, calling any methods on invalid nodes causes
+    -- neovim to hard crash
+    local entry = self.entries[buf]
+    local tick = vim.api.nvim_buf_get_changedtick(buf)
+    if not entry or entry.tick ~= tick then
+        entry = { tick = tick, nodes = {} }
+        self.entries[buf] = entry
     end
-    return assert(self.values[buf])
+    return entry.nodes
 end
 
 return Nodes
