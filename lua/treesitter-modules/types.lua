@@ -8,13 +8,15 @@
 ---@field indent? ts.mod.indent.UserConfig
 
 ---@class (exact) ts.mod.hl.UserConfig
----@field enable? boolean
----@field disable? string[]
----@field additional_vim_regex_highlighting? boolean|string[]
+---@field enable? ts.mod.Condition
+---@field disable? ts.mod.Condition
+---@field additional_vim_regex_highlighting? ts.mod.Condition
 
 ---@class (exact) ts.mod.inc.UserConfig
----@field enable? boolean
+---@field enable? ts.mod.Condition
+---@field disable? ts.mod.Condition
 ---@field keymaps? ts.mod.inc.Keymaps
 
 ---@class (exact) ts.mod.indent.UserConfig
----@field enable? boolean
+---@field enable? ts.mod.Condition
+---@field disable? ts.mod.Condition

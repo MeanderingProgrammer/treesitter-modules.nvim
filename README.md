@@ -46,7 +46,7 @@ require('treesitter-modules').setup({
     sync_install = false,
     highlight = {
         enable = false,
-        disable = {},
+        disable = false,
         -- setting this to true will run `:h syntax` and tree-sitter at the same time
         -- set this to `true` if you depend on 'syntax' being enabled
         -- using this option may slow down your editor, and duplicate highlights
@@ -55,6 +55,7 @@ require('treesitter-modules').setup({
     },
     incremental_selection = {
         enable = false,
+        disable = false,
         -- set value to `false` to disable individual mapping
         keymaps = {
             init_selection = 'gnn',
@@ -65,6 +66,7 @@ require('treesitter-modules').setup({
     },
     indent = {
         enable = false,
+        disable = false,
     },
 })
 ```

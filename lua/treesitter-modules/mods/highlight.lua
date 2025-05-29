@@ -1,9 +1,10 @@
 local ts = require('treesitter-modules.lib.ts')
+local util = require('treesitter-modules.lib.util')
 
 ---@class (exact) ts.mod.hl.Config
----@field enable boolean
----@field disable string[]
----@field additional_vim_regex_highlighting boolean|string[]
+---@field enable ts.mod.Condition
+---@field disable ts.mod.Condition
+---@field additional_vim_regex_highlighting ts.mod.Condition
 
 ---@class ts.mod.Hl: ts.mod.Module
 ---@field private config ts.mod.hl.Config
@@ -12,7 +13,7 @@ local M = {}
 ---@type ts.mod.hl.Config
 M.default = {
     enable = false,
-    disable = {},
+    disable = false,
     -- setting this to true will run `:h syntax` and tree-sitter at the same time
     -- set this to `true` if you depend on 'syntax' being enabled
     -- using this option may slow down your editor, and duplicate highlights
@@ -34,28 +35,16 @@ end
 ---@param ctx ts.mod.Context
 ---@return boolean
 function M.enabled(ctx)
-    return M.config.enable
-        and not vim.tbl_contains(M.config.disable, ctx.language)
+    return util.evaluate(M.config.enable, ctx)
+        and not util.evaluate(M.config.disable, ctx)
         and ts.has(ctx.language, 'highlights')
 end
 
 ---@param ctx ts.mod.Context
 function M.attach(ctx)
     vim.treesitter.start(ctx.buf, ctx.language)
-    if M.enable_syntax(ctx) then
+    if util.evaluate(M.config.additional_vim_regex_highlighting, ctx) then
         vim.bo[ctx.buf].syntax = 'on'
-    end
-end
-
----@private
----@param ctx ts.mod.Context
----@return boolean
-function M.enable_syntax(ctx)
-    local value = M.config.additional_vim_regex_highlighting
-    if type(value) == 'boolean' then
-        return value
-    else
-        return vim.tbl_contains(value, ctx.language)
     end
 end
 

@@ -1,7 +1,9 @@
 local selection = require('treesitter-modules.lib.selection')
+local util = require('treesitter-modules.lib.util')
 
 ---@class (exact) ts.mod.inc.Config
----@field enable boolean
+---@field enable ts.mod.Condition
+---@field disable ts.mod.Condition
 ---@field keymaps ts.mod.inc.Keymaps
 
 ---@alias ts.mod.inc.Keymaps table<ts.mod.inc.Kind, ts.mod.inc.Keymap>
@@ -25,6 +27,7 @@ local M = {}
 ---@type ts.mod.inc.Config
 M.default = {
     enable = false,
+    disable = false,
     -- set value to `false` to disable individual mapping
     keymaps = {
         init_selection = 'gnn',
@@ -57,7 +60,8 @@ end
 ---@param ctx ts.mod.Context
 ---@return boolean
 function M.enabled(ctx)
-    return M.config.enable
+    return util.evaluate(M.config.enable, ctx)
+        and not util.evaluate(M.config.disable, ctx)
 end
 
 ---@param ctx ts.mod.Context
