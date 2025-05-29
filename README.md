@@ -78,3 +78,10 @@ be available, some options may be new, and some may function slightly different.
 
 While `nvim-treesitter` seeks to provide tools not functionality this plugin seeks
 to provide common functionality not parity.
+
+# Progress
+
+- [ ] ensure_installed
+- [x] highlight
+- [x] incremental_selection
+- [ ] indent
