@@ -4,6 +4,9 @@ local ts = require('treesitter-modules.lib.ts')
 ---@class ts.mod.Selection
 local M = {}
 
+---@private
+M.nodes = require('treesitter-modules.lib.nodes').new()
+
 ---@param buf integer
 ---@param language string
 function M.init_selection(buf, language)
@@ -15,10 +18,10 @@ function M.init_selection(buf, language)
         bufnr = buf,
         ignore_injections = false,
     })
-    if not node then
-        return
+    if node then
+        M.nodes:push(buf, node)
+        M.select(node)
     end
-    M.select(Range.node(node))
 end
 
 ---@param buf integer
@@ -28,21 +31,34 @@ function M.node_incremental(buf, language)
     if not parser then
         return
     end
-    -- iterate through parent parsers and nodes until we find a node outside of range
+
     local range = Range.visual()
-    parser = parser:language_for_range(range:ts())
+    local last = M.nodes:last(buf)
     local node = nil ---@type TSNode?
-    while parser and not node do
-        node = parser:named_node_for_range(range:ts())
-        while node and range:same(Range.node(node)) do
-            node = node:parent()
+
+    if not last or not range:same(Range.node(last)) then
+        -- handle re-initialization
+        node = parser:named_node_for_range(range:ts(), {
+            ignore_injections = false,
+        })
+        M.nodes:clear(buf)
+    else
+        -- iterate through parent parsers and nodes until we find a node with
+        -- a different range
+        parser = parser:language_for_range(range:ts())
+        while parser and not node do
+            node = parser:named_node_for_range(range:ts())
+            while node and range:same(Range.node(node)) do
+                node = node:parent()
+            end
+            parser = parser:parent()
         end
-        parser = parser:parent()
     end
-    if not node then
-        return
+
+    if node then
+        M.nodes:push(buf, node)
+        M.select(node)
     end
-    M.select(Range.node(node))
 end
 
 ---@param buf integer
@@ -54,7 +70,13 @@ end
 ---@param buf integer
 ---@param language string
 function M.node_decremental(buf, language)
-    -- TODO: implement
+    -- NOTE: if a user does incremental selection, moves the cursor, enters
+    -- visual mode, then triggers this function, they will still jump back to
+    -- their previous selection, this behavior matches the original.
+    local node = M.nodes:pop(buf)
+    if node then
+        M.select(node)
+    end
 end
 
 ---@private
@@ -73,8 +95,9 @@ function M.parse(buf, language)
 end
 
 ---@private
----@param range ts.mod.Range
-function M.select(range)
+---@param node TSNode
+function M.select(node)
+    local range = Range.node(node)
     local mode = vim.api.nvim_get_mode()
     if mode.mode ~= 'v' then
         vim.api.nvim_cmd({ cmd = 'normal', bang = true, args = { 'v' } }, {})
