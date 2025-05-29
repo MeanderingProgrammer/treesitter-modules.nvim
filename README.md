@@ -28,6 +28,7 @@ Common modules to bridge nvim-treesitter & Neovim treesitter
 use({
     'MeanderingProgrammer/treesitter-modules.nvim',
     after = { 'nvim-treesitter' },
+    requires = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
         require('treesitter-modules').setup({})
     end,
@@ -91,8 +92,82 @@ implement these functions within your own configuration. It is not meant to have
 total parity with the original, option names may be different, some options may not
 be available, some options may be new, and some may function slightly different.
 
-While `nvim-treesitter` seeks to provide tools not functionality this plugin seeks
-to provide common functionality not parity.
+# Do I Need This Plugin?
+
+The short answer to this question is always no, but in this particular case it depends
+entirely on what features you care about. The new version of `nvim-treesitter` provides
+powerful and simple APIs to replace all the old builtin modules, the only exception
+to this is incremental selection. If you care about incremental selection specifically
+then this plugin is an excellent choice to avoid writing your own implementation
+of that feature, you're more than welcome to copy the code related to it from this
+repo if you prefer to avoid the dependency. All other features can be implemented
+in your configuration in about 20 lines of code. You can use the below examples as
+a sort of migration guide as well, they are written for `lazy.nvim` but should be
+simple to apply to other plugin managers.
+
+## Implementing Yourself
+
+```lua
+-- this is what you previously passed to ensure_installed
+local languages = { 'c', 'lua', 'rust' }
+return {
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    build = ':TSUpdate',
+    config = function()
+        -- replicate `ensure_installed`, runs asynchronously, skips languages that have
+        -- already been installed
+        require('nvim-treesitter').install(languages)
+        vim.api.nvim_create_autocmd('FileType', {
+            group = vim.api.nvim_create_augroup('treesitter.setup', {}),
+            callback = function(args)
+                local buf = args.buf
+                local filetype = args.match
+
+                -- you need some mechanism to avoid running on buffers that do not
+                -- correspond to a language (like oil.nvim buffers), this implementation
+                -- checks if a parser exists for the current language
+                local language = vim.treesitter.language.get_lang(filetype) or filetype
+                if not vim.treesitter.language.add(language) then
+                    return
+                end
+
+                -- replicate `highlight = { enable = true }`
+                vim.treesitter.start(buf, language)
+
+                -- replicate `indent = { enable = true }`
+                vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+                -- `incremental_selection = { enable = true }` cannot be easily replicated
+            end,
+        })
+    end,
+}
+```
+
+## Using this Plugin
+
+```lua
+-- this is what you previously passed to ensure_installed
+local languages = { 'c', 'lua', 'rust' }
+return {
+    {
+        'nvim-treesitter/nvim-treesitter',
+        branch = 'main',
+        build = ':TSUpdate',
+    },
+    {
+        'MeanderingProgrammer/treesitter-modules.nvim',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        opts = {
+            ensure_installed = languages,
+            highlight = { enable = true },
+            indent = { enable = true },
+            incremental_selection = { enable = true },
+        },
+    },
+}
+```
 
 # Progress
 

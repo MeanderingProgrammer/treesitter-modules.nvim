@@ -48,7 +48,7 @@ function M.scope_incremental(buf, language)
         while result and not vim.tbl_contains(scopes, result) do
             result = result:parent()
         end
-        assert(result ~= node, 'error to prevent infinite loop')
+        assert(result ~= node, 'infinite loop')
         return result
     end)
 end
@@ -109,8 +109,8 @@ end
 ---@param language string
 ---@return vim.treesitter.LanguageTree?
 function M.parse(buf, language)
-    local parser = ts.parser(buf, language)
-    if not parser then
+    local has, parser = pcall(vim.treesitter.get_parser, buf, language)
+    if not has or not parser then
         return nil
     end
     -- 1-indexed inclusive -> 0-indexed exclusive

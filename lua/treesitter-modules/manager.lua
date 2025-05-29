@@ -1,5 +1,3 @@
-local ts = require('treesitter-modules.lib.ts')
-
 ---@class ts.mod.Manager
 local M = {}
 
@@ -22,17 +20,17 @@ function M.init()
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
         callback = function(args)
-            M.reattach(args.buf)
+            M.reattach(args.buf, args.match)
         end,
     })
 end
 
 ---@private
 ---@param buf integer
-function M.reattach(buf)
-    local filetype = vim.api.nvim_get_option_value('filetype', { buf = buf })
+---@param filetype string
+function M.reattach(buf, filetype)
     local language = vim.treesitter.language.get_lang(filetype) or filetype
-    if not ts.parser(buf, language) then
+    if not vim.treesitter.language.add(language) then
         return
     end
     for _, mod in ipairs(M.modules) do
