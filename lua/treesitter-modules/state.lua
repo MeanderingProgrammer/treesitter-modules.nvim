@@ -11,16 +11,19 @@ function M.setup(config)
         config.incremental_selection
     )
     require('treesitter-modules.mods.indent').setup(config.indent)
-    M.install(config.ensure_installed)
+    M.install()
 end
 
 ---@private
----@param languages string|string[]
-function M.install(languages)
+function M.install()
+    local languages = M.config.ensure_installed
     if #languages == 0 then
         return
     end
-    require('nvim-treesitter').install(languages)
+    local task = require('nvim-treesitter').install(languages)
+    if M.config.sync_install then
+        task:wait()
+    end
 end
 
 return M

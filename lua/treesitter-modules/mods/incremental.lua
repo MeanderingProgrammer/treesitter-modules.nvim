@@ -25,6 +25,7 @@ local M = {}
 ---@type ts.mod.inc.Config
 M.default = {
     enable = false,
+    -- set value to `false` to disable individual mapping
     keymaps = {
         init_selection = 'gnn',
         node_incremental = 'grn',

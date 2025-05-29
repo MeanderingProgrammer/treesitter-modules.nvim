@@ -40,13 +40,22 @@ use({
 
 ```lua
 require('treesitter-modules').setup({
+    -- list of parser names that must always be installed
     ensure_installed = {},
+    -- install parsers in ensure_installed synchronously
+    sync_install = false,
     highlight = {
         enable = false,
         disable = {},
+        -- setting this to true will run `:h syntax` and tree-sitter at the same time
+        -- set this to `true` if you depend on 'syntax' being enabled
+        -- using this option may slow down your editor, and duplicate highlights
+        -- instead of `true` it can also be a list of languages
+        additional_vim_regex_highlighting = false,
     },
     incremental_selection = {
         enable = false,
+        -- set value to `false` to disable individual mapping
         keymaps = {
             init_selection = 'gnn',
             node_incremental = 'grn',
