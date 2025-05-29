@@ -54,6 +54,9 @@ require('treesitter-modules').setup({
             node_decremental = 'grm',
         },
     },
+    indent = {
+        enable = false,
+    },
 })
 ```
 
@@ -85,4 +88,4 @@ to provide common functionality not parity.
 - [x] ensure_installed
 - [x] highlight
 - [x] incremental_selection
-- [ ] indent
+- [x] indent

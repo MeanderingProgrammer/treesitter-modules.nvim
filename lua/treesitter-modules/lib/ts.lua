@@ -10,7 +10,7 @@ function M.parser(buf, language)
 end
 
 ---@param language string
----@param name 'highlights'|'locals'
+---@param name 'highlights'|'indents'|'locals'
 ---@return boolean
 function M.has(language, name)
     return #vim.treesitter.query.get_files(language, name) > 0

@@ -10,6 +10,7 @@ function M.setup(config)
     require('treesitter-modules.mods.incremental').setup(
         config.incremental_selection
     )
+    require('treesitter-modules.mods.indent').setup(config.indent)
     M.install(config.ensure_installed)
 end
 

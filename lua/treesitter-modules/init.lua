@@ -5,6 +5,7 @@ local M = {}
 ---@field ensure_installed string|string[]
 ---@field highlight ts.mod.hl.Config
 ---@field incremental_selection ts.mod.inc.Config
+---@field indent ts.mod.indent.Config
 
 ---@private
 ---@type boolean
@@ -15,6 +16,7 @@ M.default = {
     ensure_installed = {},
     highlight = require('treesitter-modules.mods.highlight').default,
     incremental_selection = require('treesitter-modules.mods.incremental').default,
+    indent = require('treesitter-modules.mods.indent').default,
 }
 
 ---@param opts? ts.mod.UserConfig
