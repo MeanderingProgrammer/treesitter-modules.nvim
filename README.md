@@ -40,6 +40,7 @@ use({
 
 ```lua
 require('treesitter-modules').setup({
+    ensure_installed = {},
     highlight = {
         enable = false,
         disable = {},
@@ -81,7 +82,7 @@ to provide common functionality not parity.
 
 # Progress
 
-- [ ] ensure_installed
+- [x] ensure_installed
 - [x] highlight
 - [x] incremental_selection
 - [ ] indent

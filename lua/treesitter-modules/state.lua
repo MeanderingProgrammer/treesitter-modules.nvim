@@ -10,6 +10,16 @@ function M.setup(config)
     require('treesitter-modules.mods.incremental').setup(
         config.incremental_selection
     )
+    M.install(config.ensure_installed)
+end
+
+---@private
+---@param languages string|string[]
+function M.install(languages)
+    if #languages == 0 then
+        return
+    end
+    require('nvim-treesitter').install(languages)
 end
 
 return M
