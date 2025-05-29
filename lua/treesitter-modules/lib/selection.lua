@@ -27,6 +27,37 @@ end
 ---@param buf integer
 ---@param language string
 function M.node_incremental(buf, language)
+    M.incremental(buf, language, function(parser, node)
+        return node:parent()
+    end)
+end
+
+---@param buf integer
+---@param language string
+function M.scope_incremental(buf, language)
+    M.incremental(buf, language, function(parser, node)
+        if language ~= parser:lang() then
+            -- only handle scope for root language
+            return nil
+        end
+        local scopes = ts.scopes(buf, language, parser:trees()[1]:root())
+        if #scopes == 0 then
+            return nil
+        end
+        local result = node:parent()
+        while result and not vim.tbl_contains(scopes, result) do
+            result = result:parent()
+        end
+        assert(result ~= node, 'error to prevent infinite loop')
+        return result
+    end)
+end
+
+---@private
+---@param buf integer
+---@param language string
+---@param parent fun(parser: vim.treesitter.LanguageTree, node: TSNode): TSNode?
+function M.incremental(buf, language, parent)
     local parser = M.parse(buf, language)
     if not parser then
         return
@@ -49,7 +80,7 @@ function M.node_incremental(buf, language)
         while parser and not node do
             node = parser:named_node_for_range(range:ts())
             while node and range:same(Range.node(node)) do
-                node = node:parent()
+                node = parent(parser, node)
             end
             parser = parser:parent()
         end
@@ -59,12 +90,6 @@ function M.node_incremental(buf, language)
         M.nodes:push(buf, node)
         M.select(node)
     end
-end
-
----@param buf integer
----@param language string
-function M.scope_incremental(buf, language)
-    -- TODO: implement
 end
 
 ---@param buf integer

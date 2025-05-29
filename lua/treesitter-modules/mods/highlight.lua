@@ -1,3 +1,5 @@
+local ts = require('treesitter-modules.lib.ts')
+
 ---@class (exact) ts.mod.hl.Config
 ---@field enable boolean
 ---@field disable string[]
@@ -28,7 +30,7 @@ end
 function M.enabled(ctx)
     return M.config.enable
         and not vim.tbl_contains(M.config.disable, ctx.language)
-        and #vim.treesitter.query.get_files(ctx.language, 'highlights') > 0
+        and ts.has(ctx.language, 'highlights')
 end
 
 ---@param ctx ts.mod.Context
