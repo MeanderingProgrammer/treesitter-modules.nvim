@@ -47,6 +47,8 @@ require('treesitter-modules').setup({
     ignore_install = {},
     -- install parsers in ensure_installed synchronously
     sync_install = false,
+    -- automatically install missing parsers when entering buffer
+    auto_install = false,
     highlight = {
         enable = false,
         disable = false,

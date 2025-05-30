@@ -1,9 +1,10 @@
 ---@meta
 
 ---@class (exact) ts.mod.UserConfig
----@field ensure_installed? ts.mod.Install
----@field ignore_install? ts.mod.Install
+---@field ensure_installed? ts.mod.Parsers
+---@field ignore_install? ts.mod.Parsers
 ---@field sync_install? boolean
+---@field auto_install? boolean
 ---@field highlight? ts.mod.hl.UserConfig
 ---@field incremental_selection? ts.mod.inc.UserConfig
 ---@field indent? ts.mod.indent.UserConfig
