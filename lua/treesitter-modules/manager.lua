@@ -66,7 +66,7 @@ end
 ---@param buf integer
 ---@param language string
 function M.reattach_modules(buf, language)
-    ---@type ts.mod.Context)
+    ---@type ts.mod.Context
     local ctx = { buf = buf, language = language }
     for _, mod in ipairs(M.modules) do
         local name = mod.name()
