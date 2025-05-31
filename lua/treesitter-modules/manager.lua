@@ -70,16 +70,15 @@ function M.reattach_modules(buf, language)
     local ctx = { buf = buf, language = language }
     for _, mod in ipairs(M.modules) do
         local name = mod.name()
-        if not mod.enabled(ctx) then
-            return
-        end
-        if M.cache:has(name, buf) then
-            M.cache:remove(name, buf)
-            mod.detach(ctx)
-        end
-        if not M.cache:has(name, buf) then
-            M.cache:add(name, buf)
-            mod.attach(ctx)
+        if mod.enabled(ctx) then
+            if M.cache:has(name, buf) then
+                M.cache:remove(name, buf)
+                mod.detach(ctx)
+            end
+            if not M.cache:has(name, buf) then
+                M.cache:add(name, buf)
+                mod.attach(ctx)
+            end
         end
     end
 end
