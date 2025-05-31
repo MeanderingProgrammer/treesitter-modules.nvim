@@ -1,9 +1,7 @@
 local ts = require('treesitter-modules.lib.ts')
 local util = require('treesitter-modules.lib.util')
 
----@class (exact) ts.mod.indent.Config
----@field enable ts.mod.Condition
----@field disable ts.mod.Condition
+---@class (exact) ts.mod.indent.Config: ts.mod.module.Config
 
 ---@class ts.mod.Indent: ts.mod.Module
 ---@field private config ts.mod.indent.Config
@@ -33,9 +31,7 @@ end
 ---@param ctx ts.mod.Context
 ---@return boolean
 function M.enabled(ctx)
-    return util.evaluate(M.config.enable, ctx)
-        and not util.evaluate(M.config.disable, ctx)
-        and ts.has(ctx.language, 'indents')
+    return util.enabled(M.config, ctx) and ts.has(ctx.language, 'indents')
 end
 
 ---@param ctx ts.mod.Context

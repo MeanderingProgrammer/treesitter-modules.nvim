@@ -6,6 +6,14 @@
 ---@class ts.mod.Util
 local M = {}
 
+---@param config ts.mod.module.Config
+---@param ctx ts.mod.Context
+---@return boolean
+function M.enabled(config, ctx)
+    return M.evaluate(config.enable, ctx)
+        and not M.evaluate(config.disable, ctx)
+end
+
 ---@param condition ts.mod.Condition
 ---@param ctx ts.mod.Context
 ---@return boolean

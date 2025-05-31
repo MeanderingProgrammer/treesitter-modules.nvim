@@ -1,9 +1,7 @@
 local ts = require('treesitter-modules.lib.ts')
 local util = require('treesitter-modules.lib.util')
 
----@class (exact) ts.mod.hl.Config
----@field enable ts.mod.Condition
----@field disable ts.mod.Condition
+---@class (exact) ts.mod.hl.Config: ts.mod.module.Config
 ---@field additional_vim_regex_highlighting ts.mod.Condition
 
 ---@class ts.mod.Hl: ts.mod.Module
@@ -35,9 +33,7 @@ end
 ---@param ctx ts.mod.Context
 ---@return boolean
 function M.enabled(ctx)
-    return util.evaluate(M.config.enable, ctx)
-        and not util.evaluate(M.config.disable, ctx)
-        and ts.has(ctx.language, 'highlights')
+    return util.enabled(M.config, ctx) and ts.has(ctx.language, 'highlights')
 end
 
 ---@param ctx ts.mod.Context

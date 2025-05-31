@@ -1,5 +1,9 @@
 ---@meta
 
+---@class (exact) ts.mod.module.Config
+---@field enable ts.mod.Condition
+---@field disable ts.mod.Condition
+
 ---@class ts.mod.Context
 ---@field buf integer
 ---@field language string
