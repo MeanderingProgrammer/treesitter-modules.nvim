@@ -5,9 +5,14 @@
 ---@field ignore_install? ts.mod.Parsers
 ---@field sync_install? boolean
 ---@field auto_install? boolean
+---@field fold? ts.mod.fold.UserConfig
 ---@field highlight? ts.mod.hl.UserConfig
 ---@field incremental_selection? ts.mod.inc.UserConfig
 ---@field indent? ts.mod.indent.UserConfig
+
+---@class (exact) ts.mod.fold.UserConfig
+---@field enable? ts.mod.Condition
+---@field disable? ts.mod.Condition
 
 ---@class (exact) ts.mod.hl.UserConfig
 ---@field enable? ts.mod.Condition

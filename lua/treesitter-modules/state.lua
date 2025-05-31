@@ -13,6 +13,7 @@ function M.setup(config)
         ignore_install = M.config.ignore_install,
         auto_install = M.config.auto_install,
     })
+    require('treesitter-modules.mods.fold').setup(config.fold)
     require('treesitter-modules.mods.highlight').setup(config.highlight)
     require('treesitter-modules.mods.incremental').setup(
         config.incremental_selection

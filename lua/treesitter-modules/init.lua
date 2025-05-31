@@ -6,6 +6,7 @@ local M = {}
 ---@field ignore_install ts.mod.Parsers
 ---@field sync_install boolean
 ---@field auto_install boolean
+---@field fold ts.mod.fold.Config
 ---@field highlight ts.mod.hl.Config
 ---@field incremental_selection ts.mod.inc.Config
 ---@field indent ts.mod.indent.Config
@@ -24,6 +25,7 @@ M.default = {
     sync_install = false,
     -- automatically install missing parsers when entering buffer
     auto_install = false,
+    fold = require('treesitter-modules.mods.fold').default,
     highlight = require('treesitter-modules.mods.highlight').default,
     incremental_selection = require('treesitter-modules.mods.incremental').default,
     indent = require('treesitter-modules.mods.indent').default,

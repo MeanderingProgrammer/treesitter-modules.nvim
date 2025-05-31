@@ -49,6 +49,10 @@ require('treesitter-modules').setup({
     sync_install = false,
     -- automatically install missing parsers when entering buffer
     auto_install = false,
+    fold = {
+        enable = false,
+        disable = false,
+    },
     highlight = {
         enable = false,
         disable = false,
@@ -142,6 +146,10 @@ return {
                     return
                 end
 
+                -- replicate `fold = { enable = true }`
+                vim.wo.foldmethod = 'expr'
+                vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
                 -- replicate `highlight = { enable = true }`
                 vim.treesitter.start(buf, language)
 
@@ -171,6 +179,7 @@ return {
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = {
             ensure_installed = languages,
+            fold = { enable = true },
             highlight = { enable = true },
             indent = { enable = true },
             incremental_selection = { enable = true },

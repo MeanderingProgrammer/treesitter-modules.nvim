@@ -17,6 +17,7 @@ M.cache = require('treesitter-modules.lib.cache').new()
 ---@private
 ---@type ts.mod.Module[]
 M.modules = {
+    require('treesitter-modules.mods.fold'),
     require('treesitter-modules.mods.highlight'),
     require('treesitter-modules.mods.incremental'),
     require('treesitter-modules.mods.indent'),
