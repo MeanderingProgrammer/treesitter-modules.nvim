@@ -1,4 +1,4 @@
-local ts = require('treesitter-modules.lib.ts')
+local ts = require('treesitter-modules.ts')
 
 ---@class (exact) ts.mod.manager.Config
 ---@field ignore_install ts.mod.Parsers

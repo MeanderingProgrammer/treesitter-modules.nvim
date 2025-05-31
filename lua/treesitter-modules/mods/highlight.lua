@@ -1,4 +1,3 @@
-local ts = require('treesitter-modules.lib.ts')
 local util = require('treesitter-modules.lib.util')
 
 ---@class (exact) ts.mod.hl.Config: ts.mod.module.Config
@@ -33,7 +32,8 @@ end
 ---@param ctx ts.mod.Context
 ---@return boolean
 function M.enabled(ctx)
-    return util.enabled(M.config, ctx) and ts.has(ctx.language, 'highlights')
+    return util.enabled(M.config, ctx)
+        and util.has_query(ctx.language, 'highlights')
 end
 
 ---@param ctx ts.mod.Context

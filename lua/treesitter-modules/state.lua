@@ -1,4 +1,4 @@
-local ts = require('treesitter-modules.lib.ts')
+local ts = require('treesitter-modules.ts')
 local util = require('treesitter-modules.lib.util')
 
 ---@class ts.mod.State
@@ -31,11 +31,11 @@ function M.install()
     if #install == 0 then
         return
     end
-    install = util.left_anti(install, ts.parsers(M.config.ignore_install))
+    install = util.difference(install, ts.parsers(M.config.ignore_install))
     if #install == 0 then
         return
     end
-    install = util.left_anti(install, ts.installed())
+    install = util.difference(install, ts.installed())
     if #install == 0 then
         return
     end
