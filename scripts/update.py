@@ -41,7 +41,7 @@ class LuaClass:
 
 
 def main() -> None:
-    root = Path("lua/treesitter-modules")
+    root = next(Path("lua").glob("*"))
     update_types(root)
     update_readme(root)
 
@@ -66,7 +66,7 @@ def update_readme(root: Path) -> None:
     old = get_code_block(readme, 2)
 
     new = get_default(root.joinpath("init.lua"))
-    new = f"require('treesitter-modules').setup({new})\n"
+    new = f"require('{root.name}').setup({new})\n"
     while True:
         match = re.search(r"require\('(.*?)'\)\.default", new)
         if match is None:
