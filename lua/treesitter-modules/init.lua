@@ -1,11 +1,7 @@
 ---@class ts.mod.Init
 local M = {}
 
----@class (exact) ts.mod.Config
----@field ensure_installed ts.mod.Languages
----@field ignore_install ts.mod.Languages
----@field sync_install boolean
----@field auto_install boolean
+---@class (exact) ts.mod.Config: ts.mod.manager.Config, ts.mod.ts.Config
 ---@field fold ts.mod.fold.Config
 ---@field highlight ts.mod.hl.Config
 ---@field incremental_selection ts.mod.inc.Config

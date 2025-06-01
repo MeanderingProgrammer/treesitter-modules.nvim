@@ -5,5 +5,5 @@ end
 initialized = true
 
 require('treesitter-modules').setup()
-require('treesitter-modules.command').init()
-require('treesitter-modules.manager').init()
+require('treesitter-modules.core.command').init()
+require('treesitter-modules.core.manager').init()

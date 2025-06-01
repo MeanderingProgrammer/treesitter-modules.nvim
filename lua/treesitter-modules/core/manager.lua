@@ -1,4 +1,4 @@
-local ts = require('treesitter-modules.ts')
+local ts = require('treesitter-modules.core.ts')
 
 ---@class (exact) ts.mod.manager.Config
 ---@field auto_install boolean

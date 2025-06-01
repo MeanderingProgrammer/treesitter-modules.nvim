@@ -20,8 +20,8 @@ class LuaClass:
         return self.value.split()[1] == "(exact)"
 
     def config(self) -> bool:
-        # ---@class ts.mod.Hl: ts.mod.Module -> ts.mod.Hl         -> Hl
-        # ---@class (exact) ts.mod.Config    -> ts.mod.Config     -> Config
+        # ---@class ts.mod.Hl: ts.mod.Module -> ts.mod.Hl     -> Hl
+        # ---@class (exact) ts.mod.Config    -> ts.mod.Config -> Config
         full_name = self.value.split(":")[0].split()[-1]
         name = full_name.split(".")[-1]
         return name == "Config"
@@ -47,9 +47,9 @@ def main() -> None:
 
 
 def update_types(root: Path) -> None:
-    libs = list(root.joinpath("mods").iterdir())
-    libs.sort(key=str)
-    files: list[Path] = [root.joinpath("init.lua")] + libs
+    files: list[Path] = [root.joinpath("init.lua")]
+    files.extend(sorted(root.joinpath("core").iterdir()))
+    files.extend(sorted(root.joinpath("mods").iterdir()))
 
     classes: list[str] = ["---@meta"]
     for definition in get_definitions(files):

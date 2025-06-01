@@ -6,10 +6,10 @@ local M = {}
 ---@param config ts.mod.Config
 function M.setup(config)
     M.config = config
-    require('treesitter-modules.manager').setup({
+    require('treesitter-modules.core.manager').setup({
         auto_install = config.auto_install,
     })
-    require('treesitter-modules.ts').setup({
+    require('treesitter-modules.core.ts').setup({
         ensure_installed = config.ensure_installed,
         ignore_install = config.ignore_install,
         sync_install = config.sync_install,
