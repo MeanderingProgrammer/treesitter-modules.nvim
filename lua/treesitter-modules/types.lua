@@ -1,8 +1,8 @@
 ---@meta
 
 ---@class (exact) ts.mod.UserConfig
----@field ensure_installed? ts.mod.Parsers
----@field ignore_install? ts.mod.Parsers
+---@field ensure_installed? ts.mod.Languages
+---@field ignore_install? ts.mod.Languages
 ---@field sync_install? boolean
 ---@field auto_install? boolean
 ---@field fold? ts.mod.fold.UserConfig

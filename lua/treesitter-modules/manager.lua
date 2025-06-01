@@ -1,7 +1,6 @@
 local ts = require('treesitter-modules.ts')
 
 ---@class (exact) ts.mod.manager.Config
----@field ignore_install ts.mod.Parsers
 ---@field auto_install boolean
 
 ---@class ts.mod.Manager
@@ -34,7 +33,7 @@ function M.init()
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
         callback = function(args)
-            M.reattach(args.buf, args.match)
+            M.attach(args.buf, args.match)
         end,
     })
 end
@@ -42,31 +41,25 @@ end
 ---@private
 ---@param buf integer
 ---@param filetype string
-function M.reattach(buf, filetype)
+function M.attach(buf, filetype)
     local language = vim.treesitter.language.get_lang(filetype) or filetype
-    if vim.treesitter.language.add(language) then
-        M.reattach_modules(buf, language)
-        return
+    local attached = M.try_attach(buf, language)
+    if M.config.auto_install and not attached then
+        -- attempt to install missing language and attach
+        ts.install(language):await(function()
+            M.try_attach(buf, language)
+        end)
     end
-    -- attempt to install parser if it is missing when configured to
-    if not M.config.auto_install then
-        return
-    end
-    if vim.tbl_contains(ts.parsers(M.config.ignore_install), language) then
-        return
-    end
-    if not vim.tbl_contains(ts.available(), language) then
-        return
-    end
-    require('nvim-treesitter').install(language):await(function()
-        M.reattach_modules(buf, language)
-    end)
 end
 
 ---@private
 ---@param buf integer
 ---@param language string
-function M.reattach_modules(buf, language)
+---@return boolean
+function M.try_attach(buf, language)
+    if not vim.treesitter.language.add(language) then
+        return false
+    end
     ---@type ts.mod.Context
     local ctx = { buf = buf, language = language }
     for _, mod in ipairs(M.modules) do
@@ -82,6 +75,7 @@ function M.reattach_modules(buf, language)
             end
         end
     end
+    return true
 end
 
 return M
