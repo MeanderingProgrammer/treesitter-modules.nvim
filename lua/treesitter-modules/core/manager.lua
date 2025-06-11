@@ -1,3 +1,5 @@
+---@module 'nvim-treesitter'
+
 local ts = require('treesitter-modules.core.ts')
 
 ---@class (exact) ts.mod.manager.Config
@@ -33,30 +35,39 @@ function M.init()
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
         callback = function(args)
-            M.attach(args.buf, args.match)
+            local buf, filetype = args.buf, args.match
+            local language = vim.treesitter.language.get_lang(filetype)
+            if not language then
+                return
+            end
+            local attached = M.attach(buf, language)
+            if not attached and M.config.auto_install then
+                ts.install(language):await(function()
+                    M.attach(buf, language)
+                end)
+            end
         end,
     })
 end
 
----@private
 ---@param buf integer
----@param filetype string
-function M.attach(buf, filetype)
-    local language = vim.treesitter.language.get_lang(filetype) or filetype
-    local attached = M.try_attach(buf, language)
-    if M.config.auto_install and not attached then
-        -- attempt to install missing language and attach
-        ts.install(language):await(function()
-            M.try_attach(buf, language)
-        end)
+---@return string[]
+function M.active(buf)
+    local result = {} ---@type string[]
+    for _, mod in ipairs(M.modules) do
+        local name = mod.name()
+        if M.cache:has(name, buf) then
+            result[#result + 1] = name
+        end
     end
+    return result
 end
 
 ---@private
 ---@param buf integer
 ---@param language string
 ---@return boolean
-function M.try_attach(buf, language)
+function M.attach(buf, language)
     if not vim.treesitter.language.add(language) then
         return false
     end
