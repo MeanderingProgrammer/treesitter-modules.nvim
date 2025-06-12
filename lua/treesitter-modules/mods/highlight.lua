@@ -40,7 +40,7 @@ end
 function M.attach(ctx)
     vim.treesitter.start(ctx.buf, ctx.language)
     if util.evaluate(M.config.additional_vim_regex_highlighting, ctx) then
-        vim.bo[ctx.buf].syntax = 'on'
+        vim.bo[ctx.buf].syntax = 'ON'
     end
 end
 
