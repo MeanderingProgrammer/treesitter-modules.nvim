@@ -1,11 +1,9 @@
 ---@class ts.mod.State
----@field private config ts.mod.Config
 local M = {}
 
 ---called from init on setup
 ---@param config ts.mod.Config
 function M.setup(config)
-    M.config = config
     require('treesitter-modules.core.manager').setup({
         auto_install = config.auto_install,
     })
