@@ -54,17 +54,21 @@ function Range:same(other)
 end
 
 ---@return integer[]
-function Range:cursor_start()
-    -- (0,0)-indexed -> (1,0)-indexed
-    ---@type integer[]
-    return { self.range[1] + 1, self.range[2] }
+function Range:pos_start()
+    return Range.pos(self.range[1], self.range[2])
 end
 
 ---@return integer[]
-function Range:cursor_end()
-    -- (0,0)-indexed -> (1,0)-indexed
-    ---@type integer[]
-    return { self.range[3] + 1, self.range[4] }
+function Range:pos_end()
+    return Range.pos(self.range[3], self.range[4])
+end
+
+---@private
+---@param row integer
+---@param col integer
+---@return integer[]
+function Range.pos(row, col)
+    return { 0, row + 1, col + 1, 0 }
 end
 
 ---@return Range4
