@@ -13,6 +13,9 @@ local M = {}
 M.group = vim.api.nvim_create_augroup('TreesitterModules', {})
 
 ---@private
+M.installed = require('treesitter-modules.lib.set').new()
+
+---@private
 M.cache = require('treesitter-modules.lib.cache').new()
 
 ---@private
@@ -40,9 +43,12 @@ function M.init()
             if not language then
                 return
             end
-            local attached = M.attach(buf, language)
-            if not attached and M.config.auto_install then
+            if M.attach(buf, language) then
+                return
+            end
+            if M.config.auto_install and not M.installed:has(language) then
                 ts.install(language):await(function()
+                    M.installed:add(language)
                     M.attach(buf, language)
                 end)
             end
@@ -56,7 +62,7 @@ function M.active(buf)
     local result = {} ---@type string[]
     for _, mod in ipairs(M.modules) do
         local name = mod.name()
-        if M.cache:has(name, buf) then
+        if M.cache:get(buf):has(name) then
             result[#result + 1] = name
         end
     end
@@ -76,12 +82,13 @@ function M.attach(buf, language)
     for _, mod in ipairs(M.modules) do
         local name = mod.name()
         if mod.enabled(ctx) then
-            if M.cache:has(name, buf) then
-                M.cache:remove(name, buf)
+            local set = M.cache:get(buf)
+            if set:has(name) then
+                set:remove(name)
                 mod.detach(ctx)
             end
-            if not M.cache:has(name, buf) then
-                M.cache:add(name, buf)
+            if not set:has(name) then
+                set:add(name)
                 mod.attach(ctx)
             end
         end

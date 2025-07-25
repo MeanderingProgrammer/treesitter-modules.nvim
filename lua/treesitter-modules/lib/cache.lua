@@ -1,7 +1,7 @@
----@alias ts.mod.Set table<integer, true>
+local Set = require('treesitter-modules.lib.set')
 
 ---@class ts.mod.Cache
----@field private sets table<string, ts.mod.Set>
+---@field private sets table<integer, ts.mod.Set?>
 local Cache = {}
 Cache.__index = Cache
 
@@ -12,33 +12,13 @@ function Cache.new()
     return self
 end
 
----@param name string
 ---@param buf integer
----@return boolean
-function Cache:has(name, buf)
-    return self:get(name)[buf] == true
-end
-
----@param name string
----@param buf integer
-function Cache:add(name, buf)
-    self:get(name)[buf] = true
-end
-
----@param name string
----@param buf integer
-function Cache:remove(name, buf)
-    self:get(name)[buf] = nil
-end
-
----@private
----@param name string
 ---@return ts.mod.Set
-function Cache:get(name)
-    if not self.sets[name] then
-        self.sets[name] = {}
+function Cache:get(buf)
+    if not self.sets[buf] then
+        self.sets[buf] = Set.new()
     end
-    return assert(self.sets[name])
+    return assert(self.sets[buf])
 end
 
 return Cache
