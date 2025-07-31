@@ -2,12 +2,6 @@
 
 Common modules to bridge nvim-treesitter & Neovim treesitter
 
-> [!CAUTION]
->
-> This plugin is extremely experimental at this stage and will likely need to change
-> to accommodate updates to `nvim-treesitter`. Until the `main` branch becomes the
-> default this plugin will also be in flux.
-
 # Install
 
 ## lazy.nvim
@@ -92,7 +86,7 @@ This makes a lot of sense in terms of maintenance, combining functionality with 
 is essentially a package manager for parsers is a lot to put into one plugin and
 splits developer effort over a large area. However, as a downside, users will now
 need to write this common functionality within their individual configurations. It's
-not complex logic, but for someone newer it may server as another barrier to entry.
+not complex logic, but for someone newer it may serve as another barrier to entry.
 
 This plugin aims to provide the functionality previously offered by `nvim-treesitter`
 through simple configuration. It can also serves as a concrete example of how to

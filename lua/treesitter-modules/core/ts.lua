@@ -24,8 +24,8 @@ end
 ---@param languages ts.mod.Languages
 ---@return async.Task
 function M.install(languages)
-    local ignore = M.config.ignore_install
-    local install = util.difference(M.resolve(languages), M.resolve(ignore))
+    local ignore = M.resolve(M.config.ignore_install)
+    local install = util.difference(M.resolve(languages), ignore)
     return require('nvim-treesitter').install(install)
 end
 
@@ -39,8 +39,11 @@ function M.resolve(languages)
     else
         result = languages
     end
-    local all = vim.tbl_contains(result, 'all')
-    return all and require('nvim-treesitter').get_available() or result
+    if vim.tbl_contains(result, 'all') then
+        return require('nvim-treesitter').get_available()
+    else
+        return result
+    end
 end
 
 return M
