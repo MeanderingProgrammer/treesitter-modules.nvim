@@ -16,27 +16,26 @@ class LuaClass:
     def add(self, value: str) -> None:
         self.fields.append(value)
 
-    def exact(self) -> bool:
-        return self.value.split()[1] == "(exact)"
+    def name(self) -> str:
+        # ---@class ts.mod.Hl: ts.mod.Module -> ts.mod.Hl
+        # ---@class (exact) ts.mod.Config    -> ts.mod.Config
+        return self.value.split(":")[0].split()[-1]
 
-    def config(self) -> bool:
-        # ---@class ts.mod.Hl: ts.mod.Module -> ts.mod.Hl     -> Hl
-        # ---@class (exact) ts.mod.Config    -> ts.mod.Config -> Config
-        full_name = self.value.split(":")[0].split()[-1]
-        name = full_name.split(".")[-1]
-        return name == "Config"
+    def to_user(self) -> str | None:
+        kind = self.value.split()[1]
+        simple = self.name().split(".")[-1]
+        if kind != "(exact)" or simple != "Config":
+            return None
 
-    def to_user(self) -> str:
-        def user(s: str) -> str:
-            return s.replace(".Config", ".UserConfig")
-
-        lines: list[str] = [user(self.value)]
-        for field in self.fields:
-            field = user(field)
-            name = field.split()[1]
-            assert not name.endswith("?")
-            field = field.replace(f" {name} ", f" {name}? ")
-            lines.append(field)
+        lines: list[str] = []
+        values = [self.value] + self.fields
+        for i, value in enumerate(values):
+            value = value.replace(".Config", ".UserConfig")
+            if i > 0:
+                name = value.split()[1]
+                assert not name.endswith("?")
+                value = value.replace(f" {name} ", f" {name}? ")
+            lines.append(value)
         return "\n".join(lines)
 
 
@@ -51,13 +50,14 @@ def update_types(root: Path) -> None:
     files.extend(sorted(root.joinpath("core").iterdir()))
     files.extend(sorted(root.joinpath("mods").iterdir()))
 
-    classes: list[str] = ["---@meta"]
-    for definition in get_definitions(files):
-        if definition.exact() and definition.config():
-            classes.append(definition.to_user())
+    sections: list[str] = ["---@meta"]
+    for lua_type in get_lua_types(files):
+        user = lua_type.to_user()
+        if user is not None:
+            sections.append(user)
 
     types = root.joinpath("types.lua")
-    types.write_text("\n\n".join(classes) + "\n")
+    types.write_text("\n\n".join(sections) + "\n")
 
 
 def update_readme(root: Path) -> None:
@@ -81,7 +81,7 @@ def update_readme(root: Path) -> None:
     readme.write_text(text)
 
 
-def get_definitions(files: list[Path]) -> list[LuaClass]:
+def get_lua_types(files: list[Path]) -> list[LuaClass]:
     result: list[LuaClass] = []
     for file in files:
         for comment in get_comments(file):
