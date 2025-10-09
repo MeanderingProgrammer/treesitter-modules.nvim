@@ -1,4 +1,4 @@
-*treesitter-modules.txt*      For NVIM v0.11.3     Last change: 2025 August 07
+*treesitter-modules.txt*     For NVIM v0.11.4     Last change: 2025 October 09
 
 ==============================================================================
 Table of Contents                       *treesitter-modules-table-of-contents*
@@ -18,7 +18,7 @@ Table of Contents                       *treesitter-modules-table-of-contents*
 ==============================================================================
 1. treesitter-modules.nvim        *treesitter-modules-treesitter-modules.nvim*
 
-Common modules to bridge nvim-treesitter & Neovim treesitter
+Original modules from nvim-treesitter master branch
 
 
 ==============================================================================

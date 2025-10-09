@@ -1,6 +1,6 @@
 # treesitter-modules.nvim
 
-Common modules to bridge nvim-treesitter & Neovim treesitter
+Original modules from nvim-treesitter master branch
 
 # Install
 
