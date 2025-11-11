@@ -151,9 +151,29 @@ end
 ---@param node TSNode
 function M.select(node)
     local range = Range.node(node)
-    vim.fn.setpos("'<", range:pos_start())
-    vim.fn.setpos("'>", range:pos_end())
-    vim.cmd.normal({ 'gv', bang = true })
+
+    local start_pos = range:pos_start()
+    local end_pos = range:pos_end()
+
+    -- Convert to row/col format (1-based to 0-based for nvim_win_set_cursor)
+    local start_row, start_col = start_pos[2], start_pos[3]
+    local end_row, end_col = end_pos[2], end_pos[3]
+
+    -- enter visual mode if normal or operator-pending (no) mode
+    -- Why? According to https://learnvimscriptthehardway.stevelosh.com/chapters/15.html
+    --   If your operator-pending mapping ends with some text visually selected, Vim will operate on that text.
+    --   Otherwise, Vim will operate on the text between the original cursor position and the new position.
+    local mode = vim.api.nvim_get_mode()
+    if mode.mode ~= 'v' then
+        -- Call to `nvim_replace_termcodes()` is needed for sending appropriate command to enter blockwise mode
+        selection_mode = vim.api.nvim_replace_termcodes('v', true, true, true)
+        vim.api.nvim_cmd({ cmd = "normal", bang = true, args = { 'v' } }, {})
+    end
+
+    vim.api.nvim_win_set_cursor(0, { start_row, start_col - 1 })
+    vim.cmd "normal! o"
+    vim.api.nvim_win_set_cursor(0, { end_row, end_col - 1 })
+
 end
 
 return M
