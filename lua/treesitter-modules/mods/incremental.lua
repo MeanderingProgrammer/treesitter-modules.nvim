@@ -75,7 +75,7 @@ end
 ---@param rhs fun(buf: integer, language: string)
 function M.map(ctx, kind, rhs)
     local lhs = M.config.keymaps[kind]
-    if lhs == false then
+    if not lhs then
         return
     end
     local details = M.details[kind]
@@ -97,7 +97,7 @@ end
 ---@param kind ts.mod.inc.Kind
 function M.delete(ctx, kind)
     local lhs = M.config.keymaps[kind]
-    if lhs == false then
+    if not lhs then
         return
     end
     local details = M.details[kind]

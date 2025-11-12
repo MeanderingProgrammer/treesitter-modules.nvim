@@ -151,9 +151,12 @@ end
 ---@param node TSNode
 function M.select(node)
     local range = Range.node(node)
-    vim.fn.setpos("'<", range:pos_start())
-    vim.fn.setpos("'>", range:pos_end())
-    vim.cmd.normal({ 'gv', bang = true })
+    if vim.api.nvim_get_mode().mode ~= 'v' then
+        vim.cmd.normal({ 'v', bang = true })
+    end
+    vim.api.nvim_win_set_cursor(0, range:cursor_start())
+    vim.cmd.normal({ 'o', bang = true })
+    vim.api.nvim_win_set_cursor(0, range:cursor_end())
 end
 
 return M
