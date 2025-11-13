@@ -175,10 +175,3 @@ return {
     },
 }
 ```
-
-# Progress
-
-- [x] ensure_installed
-- [x] highlight
-- [x] incremental_selection
-- [x] indent
