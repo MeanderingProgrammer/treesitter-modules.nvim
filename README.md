@@ -60,6 +60,7 @@ require('treesitter-modules').setup({
         enable = false,
         disable = false,
         -- set value to `false` to disable individual mapping
+        -- node_decremental captures both node_incremental and scope_incremental
         keymaps = {
             init_selection = 'gnn',
             node_incremental = 'grn',

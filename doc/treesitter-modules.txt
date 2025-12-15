@@ -1,4 +1,4 @@
-*treesitter-modules.txt*     For NVIM v0.11.5    Last change: 2025 November 13
+*treesitter-modules.txt*     For NVIM v0.11.5    Last change: 2025 December 15
 
 ==============================================================================
 Table of Contents                       *treesitter-modules-table-of-contents*
@@ -84,6 +84,7 @@ DEFAULT CONFIGURATION         *treesitter-modules-setup-default-configuration*
             enable = false,
             disable = false,
             -- set value to `false` to disable individual mapping
+            -- node_decremental captures both node_incremental and scope_incremental
             keymaps = {
                 init_selection = 'gnn',
                 node_incremental = 'grn',
