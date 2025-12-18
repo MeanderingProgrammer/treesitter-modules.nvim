@@ -47,9 +47,11 @@ function M.init()
                 return
             end
             if M.config.auto_install and not M.installed:has(language) then
-                ts.install(language):await(function()
-                    M.installed:add(language)
-                    M.attach(buf, language)
+                ts.install(language):await(function(err)
+                    if not err then
+                        M.installed:add(language)
+                        M.attach(buf, language)
+                    end
                 end)
             end
         end,
