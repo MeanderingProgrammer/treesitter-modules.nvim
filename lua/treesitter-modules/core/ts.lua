@@ -29,6 +29,11 @@ function M.install(languages)
     return require('nvim-treesitter').install(install)
 end
 
+---@return string[]
+function M.parsers()
+    return require('nvim-treesitter').get_available()
+end
+
 ---@private
 ---@param languages ts.mod.Languages
 ---@return string[]
@@ -39,11 +44,7 @@ function M.resolve(languages)
     else
         result = languages
     end
-    if vim.tbl_contains(result, 'all') then
-        return require('nvim-treesitter').get_available()
-    else
-        return result
-    end
+    return vim.tbl_contains(result, 'all') and M.parsers() or result
 end
 
 return M
