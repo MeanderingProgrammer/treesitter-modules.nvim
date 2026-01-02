@@ -46,6 +46,10 @@ function M.init()
             if M.attach(buf, language) then
                 return
             end
+            local parsers = require('nvim-treesitter.parsers')
+            if parsers[language] == nil then
+                return
+            end
             if M.config.auto_install and not M.installed:has(language) then
                 ts.install(language):await(function()
                     M.installed:add(language)
