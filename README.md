@@ -75,25 +75,56 @@ require('treesitter-modules').setup({
 })
 ```
 
+## API
+
+Instead of having this plugin create incremental selection keymaps for you via the
+configuration you can use API methods with the same name to create them yourself.
+This gives you control over over all associated properties (like mode and description)
+as well as when the keymaps get created and what buffers they exist for.
+
+For example lets say we currently have the following configuration:
+
+```lua
+require('treesitter-modules').setup({
+    highlight = { enable = true },
+    incremental_selection = { enable = true },
+})
+```
+
+We can create the same keymaps but without any descriptions and such that they exist
+for all buffers using the following configuration:
+
+```lua
+local ts = require('treesitter-modules')
+ts.setup({
+    highlight = { enable = true },
+})
+vim.keymap.set('n', 'gnn', ts.init_selection)
+vim.keymap.set('x', 'grn', ts.node_incremental)
+vim.keymap.set('x', 'grc', ts.scope_incremental)
+vim.keymap.set('x', 'grm', ts.node_decremental)
+```
+
 # Purpose
 
 As [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) moves towards
 a stable release they have made the decision to be less around providing functionality
 directly, and more towards providing the tools to enable functionality. Specifically
-they are focussed on making parsers and queries easily available, but not using those
-queries to enable highlighting for example.
+they are focussed on making parsers and queries easily available, but not using
+those queries to enable highlighting for example.
 
-This makes a lot of sense in terms of maintenance, combining functionality with what
-is essentially a package manager for parsers is a lot to put into one plugin and
-splits developer effort over a large area. However, as a downside, users will now
-need to write this common functionality within their individual configurations. It's
-not complex logic, but for someone newer it may serve as another barrier to entry.
+This makes a lot of sense in terms of maintenance, combining functionality with
+what is essentially a package manager for parsers is a lot to put into one plugin
+and splits developer effort over a large area. However, as a downside, users will
+now need to write this common functionality within their individual configurations.
+It's not complex logic, but for someone newer it may serve as another barrier to
+entry.
 
 This plugin aims to provide the functionality previously offered by `nvim-treesitter`
 through simple configuration. It can also serves as a concrete example of how to
 implement these functions within your own configuration. It is not meant to have
-total parity with the original, option names may be different, some options may not
-be available, some options may be new, and some may function slightly different.
+total parity with the original, option names may be different, some options may
+not be available, some options may be new, and some may function slightly different.
 
 # Do I Need This Plugin?
 
@@ -104,9 +135,9 @@ to this is incremental selection. If you care about incremental selection specif
 then this plugin is an excellent choice to avoid writing your own implementation
 of that feature, you're more than welcome to copy the code related to it from this
 repo if you prefer to avoid the dependency. All other features can be implemented
-in your configuration in about 20 lines of code. You can use the below examples as
-a sort of migration guide as well, they are written for `lazy.nvim` but should be
-simple to apply to other plugin managers.
+in your configuration in about 20 lines of code. You can use the below examples
+as a sort of migration guide as well, they are written for `lazy.nvim` but should
+be simple to apply to other plugin managers.
 
 ## Implementing Yourself
 

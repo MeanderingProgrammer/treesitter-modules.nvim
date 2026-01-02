@@ -1,4 +1,4 @@
-*treesitter-modules.txt*     For NVIM v0.11.5    Last change: 2025 December 15
+*treesitter-modules.txt*     For NVIM v0.11.5     Last change: 2026 January 02
 
 ==============================================================================
 Table of Contents                       *treesitter-modules-table-of-contents*
@@ -9,6 +9,7 @@ Table of Contents                       *treesitter-modules-table-of-contents*
   - packer.nvim                       |treesitter-modules-install-packer.nvim|
 3. Setup                                            |treesitter-modules-setup|
   - Default Configuration     |treesitter-modules-setup-default-configuration|
+  - API                                         |treesitter-modules-setup-api|
 4. Purpose                                        |treesitter-modules-purpose|
 5. Do I Need This Plugin?          |treesitter-modules-do-i-need-this-plugin?|
   - Implementing Yourself|treesitter-modules-do-i-need-this-plugin?-implementing-yourself|
@@ -97,6 +98,38 @@ DEFAULT CONFIGURATION         *treesitter-modules-setup-default-configuration*
             disable = false,
         },
     })
+<
+
+
+API                                             *treesitter-modules-setup-api*
+
+Instead of having this plugin create incremental selection keymaps for you via
+the configuration you can use API methods with the same name to create them
+yourself. This gives you control over over all associated properties (like mode
+and description) as well as when the keymaps get created and what buffers they
+exist for.
+
+For example lets say we currently have the following configuration:
+
+>lua
+    require('treesitter-modules').setup({
+        highlight = { enable = true },
+        incremental_selection = { enable = true },
+    })
+<
+
+We can create the same keymaps but without any descriptions and such that they
+exist for all buffers using the following configuration:
+
+>lua
+    local ts = require('treesitter-modules')
+    ts.setup({
+        highlight = { enable = true },
+    })
+    vim.keymap.set('n', 'gnn', ts.init_selection)
+    vim.keymap.set('x', 'grn', ts.node_incremental)
+    vim.keymap.set('x', 'grc', ts.scope_incremental)
+    vim.keymap.set('x', 'grm', ts.node_decremental)
 <
 
 

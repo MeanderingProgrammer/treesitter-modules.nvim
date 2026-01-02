@@ -1,4 +1,4 @@
----@class ts.mod.Init
+---@class ts.mod.Init: ts.mod.Api
 local M = {}
 
 ---@class (exact) ts.mod.Config: ts.mod.manager.Config, ts.mod.ts.Config
@@ -38,4 +38,9 @@ function M.setup(opts)
     require('treesitter-modules.state').setup(config)
 end
 
-return M
+return setmetatable(M, {
+    __index = function(_, key)
+        -- allows api methods to be accessed from top level
+        return require('treesitter-modules.api')[key]
+    end,
+})
