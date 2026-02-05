@@ -1,4 +1,4 @@
-*treesitter-modules.txt*     For NVIM v0.11.5     Last change: 2026 January 02
+*treesitter-modules.txt*     For NVIM v0.11.6    Last change: 2026 February 05
 
 ==============================================================================
 Table of Contents                       *treesitter-modules-table-of-contents*

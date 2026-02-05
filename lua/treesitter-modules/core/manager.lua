@@ -47,9 +47,11 @@ function M.init()
                 return
             end
             if M.should_install(language) then
-                ts.install(language):await(function()
-                    M.installed:add(language)
-                    M.attach(buf, language)
+                ts.install(language):await(function(err)
+                    if not err then
+                        M.installed:add(language)
+                        M.attach(buf, language)
+                    end
                 end)
             end
         end,
