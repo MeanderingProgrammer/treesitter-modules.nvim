@@ -2,6 +2,11 @@
 
 Original modules from nvim-treesitter master branch
 
+> [!CAUTION]
+> With the release of neovim `0.12.0` there is likely nothing you need from this
+> plugin. Consider reading the [Do I Need This Plugin?](#do-i-need-this-plugin)
+> section and avoiding this dependency entirely!
+
 # Install
 
 ## lazy.nvim
@@ -129,15 +134,22 @@ not be available, some options may be new, and some may function slightly differ
 # Do I Need This Plugin?
 
 The short answer to this question is always no, but in this particular case it depends
-entirely on what features you care about. The new version of `nvim-treesitter` provides
-powerful and simple APIs to replace all the old builtin modules, the only exception
-to this is incremental selection. If you care about incremental selection specifically
-then this plugin is an excellent choice to avoid writing your own implementation
-of that feature, you're more than welcome to copy the code related to it from this
-repo if you prefer to avoid the dependency. All other features can be implemented
-in your configuration in about 20 lines of code. You can use the below examples
-as a sort of migration guide as well, they are written for `lazy.nvim` but should
-be simple to apply to other plugin managers.
+on what features you care about, and what version of neovim you're using.
+
+The new version of `nvim-treesitter` provides powerful and simple APIs to replace
+all the old builtin modules, the only exceptions to this is incremental selection.
+
+As of neovim `0.12.0` incremental selection is largely covered by the `an` and `in`
+keymaps for more info see `:h treesitter-defaults`. You can always remap these.
+
+The only remaining gaps are scope based incremental selection (neovim does node
+based) and the ability to auto install parsers. If these 2 very specific features
+do not matter to you then I would highly recommend implementing this yourself in
+your configuration, which is covered below.
+
+All other features can be implemented in your configuration in about 20 lines of
+code. You can use the below examples as a sort of migration guide as well, they
+are written for `lazy.nvim` but should be simple to apply to other plugin managers.
 
 ## Implementing Yourself
 
@@ -176,7 +188,7 @@ return {
                 -- replicate `indent = { enable = true }`
                 vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 
-                -- `incremental_selection = { enable = true }` cannot be easily replicated
+                -- `incremental_selection = { enable = true }` covered by 0.12.0
             end,
         })
     end,
