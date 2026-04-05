@@ -5,7 +5,7 @@ from textwrap import indent
 
 import tree_sitter_lua
 import tree_sitter_markdown
-from tree_sitter import Language, Parser
+from tree_sitter import Language, Parser, Query, QueryCursor
 
 
 @dataclass(frozen=True)
@@ -46,9 +46,9 @@ def main() -> None:
 
 
 def update_types(root: Path) -> None:
-    files: list[Path] = [root.joinpath("init.lua")]
-    files.extend(sorted(root.joinpath("core").iterdir()))
-    files.extend(sorted(root.joinpath("mods").iterdir()))
+    files = [root / "init.lua"]
+    files.extend(sorted((root / "core").iterdir()))
+    files.extend(sorted((root / "mods").iterdir()))
 
     sections: list[str] = ["---@meta"]
     for lua_type in get_lua_types(files):
@@ -56,16 +56,16 @@ def update_types(root: Path) -> None:
         if user is not None:
             sections.append(user)
 
-    types = root.joinpath("types.lua")
+    types = root / "types.lua"
     types.write_text("\n\n".join(sections) + "\n")
 
 
 def update_readme(root: Path) -> None:
     readme = Path("README.md")
 
-    old = get_code_block(readme, 2)
+    old = get_code_block(readme, 3)
 
-    new = get_default(root.joinpath("init.lua"))
+    new = get_default(root / "init.lua")
     new = f"require('{root.name}').setup({new})\n"
     while True:
         match = re.search(r"require\('(.*?)'\)\.default", new)
@@ -73,7 +73,7 @@ def update_readme(root: Path) -> None:
             break
         statement = new[match.start() : match.end()]
         path = match.group(1).replace(".", "/")
-        file = Path("lua").joinpath(path).with_suffix(".lua")
+        file = (Path("lua") / path).with_suffix(".lua")
         config = indent(get_default(file), "    ").strip()
         new = new.replace(statement, config)
 
@@ -126,19 +126,23 @@ def get_code_block(file: Path, n: int) -> str:
 
 
 def ts_query(file: Path, query: str, target: str) -> list[str]:
-    tree_sitter = {
-        ".lua": tree_sitter_lua,
-        ".md": tree_sitter_markdown,
+    tree_sitter_language = {
+        ".lua": tree_sitter_lua.language(),
+        ".md": tree_sitter_markdown.language(),
     }[file.suffix]
 
-    language = Language(tree_sitter.language())
+    language = Language(tree_sitter_language)
     tree = Parser(language).parse(file.read_text().encode())
-    captures = language.query(query).captures(tree.root_node)
+    captures = QueryCursor(Query(language, query)).captures(tree.root_node)
 
     nodes = captures.get(target, [])
     nodes.sort(key=lambda node: node.start_byte)
-    texts = [node.text for node in nodes]
-    return [text.decode() for text in texts if text is not None]
+    result: list[str] = []
+    for node in nodes:
+        text = node.text
+        assert text is not None
+        result.append(text.decode())
+    return result
 
 
 if __name__ == "__main__":

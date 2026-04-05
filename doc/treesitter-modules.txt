@@ -5,6 +5,7 @@ Table of Contents                       *treesitter-modules-table-of-contents*
 
 1. treesitter-modules.nvim        |treesitter-modules-treesitter-modules.nvim|
 2. Install                                        |treesitter-modules-install|
+  - vim.pack                             |treesitter-modules-install-vim.pack|
   - lazy.nvim                           |treesitter-modules-install-lazy.nvim|
   - packer.nvim                       |treesitter-modules-install-packer.nvim|
 3. Setup                                            |treesitter-modules-setup|
@@ -28,6 +29,17 @@ Original modules from nvim-treesitter master branch
 
 ==============================================================================
 2. Install                                        *treesitter-modules-install*
+
+
+VIM.PACK                                 *treesitter-modules-install-vim.pack*
+
+>lua
+    vim.pack.add({
+        'https://github.com/nvim-treesitter/nvim-treesitter',
+        'https://github.com/MeanderingProgrammer/treesitter-modules.nvim',
+    })
+    require('treesitter-modules').setup({})
+<
 
 
 LAZY.NVIM                               *treesitter-modules-install-lazy.nvim*

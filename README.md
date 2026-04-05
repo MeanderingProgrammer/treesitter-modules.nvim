@@ -9,6 +9,16 @@ Original modules from nvim-treesitter master branch
 
 # Install
 
+## vim.pack
+
+```lua
+vim.pack.add({
+    'https://github.com/nvim-treesitter/nvim-treesitter',
+    'https://github.com/MeanderingProgrammer/treesitter-modules.nvim',
+})
+require('treesitter-modules').setup({})
+```
+
 ## lazy.nvim
 
 ```lua
