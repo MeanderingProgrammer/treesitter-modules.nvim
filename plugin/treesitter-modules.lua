@@ -1,8 +1,7 @@
-local initialized = false
-if initialized then
+if vim.g.loaded_treesitter_modules then
     return
 end
-initialized = true
+vim.g.loaded_treesitter_modules = true
 
 require('treesitter-modules').setup()
 require('treesitter-modules.core.command').init()
