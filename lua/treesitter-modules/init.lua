@@ -19,6 +19,8 @@ M.default = {
     ignore_install = {},
     -- install parsers in ensure_installed synchronously
     sync_install = false,
+    -- passed to `nvim-treesitter` install
+    install_options = {},
     -- automatically install missing parsers when entering buffer
     auto_install = false,
     fold = require('treesitter-modules.mods.fold').default,

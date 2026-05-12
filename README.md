@@ -56,6 +56,8 @@ require('treesitter-modules').setup({
     ignore_install = {},
     -- install parsers in ensure_installed synchronously
     sync_install = false,
+    -- passed to `nvim-treesitter` install
+    install_options = {},
     -- automatically install missing parsers when entering buffer
     auto_install = false,
     fold = {

@@ -13,6 +13,7 @@
 ---@field ensure_installed? ts.mod.Languages
 ---@field ignore_install? ts.mod.Languages
 ---@field sync_install? boolean
+---@field install_options? InstallOptions
 
 ---@class (exact) ts.mod.fold.UserConfig: ts.mod.module.UserConfig
 

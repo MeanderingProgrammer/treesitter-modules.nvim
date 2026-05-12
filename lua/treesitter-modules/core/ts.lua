@@ -4,6 +4,7 @@ local util = require('treesitter-modules.lib.util')
 ---@field ensure_installed ts.mod.Languages
 ---@field ignore_install ts.mod.Languages
 ---@field sync_install boolean
+---@field install_options InstallOptions
 
 ---@alias ts.mod.Languages string|string[]
 
@@ -26,7 +27,7 @@ end
 function M.install(languages)
     local ignore = M.resolve(M.config.ignore_install)
     local install = util.difference(M.resolve(languages), ignore)
-    return require('nvim-treesitter').install(install)
+    return require('nvim-treesitter').install(install, M.config.install_options)
 end
 
 ---@return string[]

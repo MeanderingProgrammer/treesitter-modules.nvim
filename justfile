@@ -5,6 +5,6 @@ update:
   python scripts/update.py
   # https://github.com/kdheepak/panvimdoc
   ../../../tools/panvimdoc/panvimdoc.sh \
+    --input-file README.md \
     --project-name treesitter-modules \
-    --input-file README.md
-
+    --description "Original modules from nvim-treesitter master branch"

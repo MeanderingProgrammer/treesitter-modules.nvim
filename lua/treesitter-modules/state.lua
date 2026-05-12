@@ -11,6 +11,7 @@ function M.setup(config)
         ensure_installed = config.ensure_installed,
         ignore_install = config.ignore_install,
         sync_install = config.sync_install,
+        install_options = config.install_options,
     })
     require('treesitter-modules.mods.fold').setup(config.fold)
     require('treesitter-modules.mods.highlight').setup(config.highlight)
