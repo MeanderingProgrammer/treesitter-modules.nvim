@@ -1,5 +1,5 @@
 *treesitter-modules.txt*   Original modules from nvim-treesitter master branch
-                                  For NVIM v0.12.2    Last change: 2026 May 11
+                              For NVIM v0.12.5    Last change: 2026 October 10
 
 ==============================================================================
 Table of Contents                       *treesitter-modules-table-of-contents*
@@ -216,13 +216,13 @@ IMPLEMENTING YOURSELF*treesitter-modules-do-i-need-this-plugin?-implementing-you
         config = function()
             -- replicate `ensure_installed`, runs asynchronously, skips existing languages
             require('nvim-treesitter').install(languages)
-    
+
             vim.api.nvim_create_autocmd('FileType', {
                 group = vim.api.nvim_create_augroup('treesitter.setup', {}),
                 callback = function(args)
                     local buf = args.buf
                     local filetype = args.match
-    
+
                     -- you need some mechanism to avoid running on buffers that do not
                     -- correspond to a language (like oil.nvim buffers), this implementation
                     -- checks if a parser exists for the current language
@@ -230,17 +230,17 @@ IMPLEMENTING YOURSELF*treesitter-modules-do-i-need-this-plugin?-implementing-you
                     if not vim.treesitter.language.add(language) then
                         return
                     end
-    
+
                     -- replicate `fold = { enable = true }`
                     vim.wo.foldmethod = 'expr'
                     vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-    
+
                     -- replicate `highlight = { enable = true }`
                     vim.treesitter.start(buf, language)
-    
+
                     -- replicate `indent = { enable = true }`
                     vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    
+
                     -- `incremental_selection = { enable = true }` covered by 0.12.0
                 end,
             })
